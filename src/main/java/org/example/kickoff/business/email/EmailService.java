@@ -101,7 +101,7 @@ public abstract class EmailService  {
 	private Map<String, String> buildTemplateContent(EmailTemplate templateEmail, Map<String, Object> messageParameters) {
 		Map<EmailTemplatePart, String> templateParts = templateEmail.getTemplateParts();
 		Arrays.stream(EmailTemplatePart.values())
-			.filter(part -> !templateParts.containsKey(part.getKey()))
+			.filter(part -> !templateParts.containsKey(part))
 			.forEach(part -> templateParts.putIfAbsent(part, emailTemplateService.build(templateEmail, part, messageParameters)));
 
 		if (isEmpty(templateParts.get(BODY_TITLE))) {
