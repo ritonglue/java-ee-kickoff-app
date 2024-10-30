@@ -9,14 +9,31 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import org.omnifaces.persistence.model.GeneratedIdEntity;
 
+@NamedQuery(name = LoginToken.REMOVE, query =
+  "DELETE"
++ " FROM"
++ "	LoginToken _loginToken"
++ " WHERE"
++ "	_loginToken.tokenHash = :tokenHash"
+)
+@NamedQuery(name = LoginToken.REMOVE_EXPIRED, query =
+  "DELETE"
++ " FROM"
++ "	LoginToken _loginToken"
++ " WHERE"
++ "	_loginToken.expiration < CURRENT_TIMESTAMP"
+)
 @Entity
 public class LoginToken extends GeneratedIdEntity<Long> {
+	public final static String REMOVE = "LoginToken.remove";
+	public final static String REMOVE_EXPIRED = "LoginToken.removeExpired";
 
 	private static final long serialVersionUID = 1L;
 
