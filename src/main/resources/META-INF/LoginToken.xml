@@ -21,7 +21,7 @@
 			FROM
 				LoginToken _loginToken
 			WHERE
-				_loginToken.expiration &lt; CURRENT_TIMESTAMP
+				_loginToken.expiration &lt; :expiration
 		</query>
 	</named-query>
 </entity-mappings>

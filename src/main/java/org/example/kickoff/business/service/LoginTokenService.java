@@ -52,6 +52,7 @@ public class LoginTokenService extends BaseEntityService<Long, LoginToken> {
 
 	public void removeExpired() {
 		createNamedQuery("LoginToken.removeExpired")
+			.setParameter("expiration", Instant.now())
 			.executeUpdate();
 	}
 
