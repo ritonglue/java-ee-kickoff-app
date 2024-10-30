@@ -28,7 +28,7 @@ import org.omnifaces.persistence.model.GeneratedIdEntity;
 + " FROM"
 + "	LoginToken _loginToken"
 + " WHERE"
-+ "	_loginToken.expiration < CURRENT_TIMESTAMP"
++ "	_loginToken.expiration < :expiration"
 )
 @Entity
 public class LoginToken extends GeneratedIdEntity<Long> {

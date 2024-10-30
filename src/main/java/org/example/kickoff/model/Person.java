@@ -46,7 +46,7 @@ import org.omnifaces.persistence.model.TimestampedEntity;
 + " WHERE"
 + "	_loginToken.tokenHash = :tokenHash AND"
 + "	_loginToken.type = :tokenType AND"
-+ "	_loginToken.expiration > CURRENT_TIMESTAMP"
++ "	_loginToken.expiration > :expiration"
 )
 @Entity
 public class Person extends TimestampedEntity<Long> {
