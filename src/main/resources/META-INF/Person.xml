@@ -29,7 +29,7 @@
 			WHERE
 				_loginToken.tokenHash = :tokenHash AND
 				_loginToken.type = :tokenType AND
-				_loginToken.expiration &gt; CURRENT_TIMESTAMP
+				_loginToken.expiration &gt; :expiration
 		</query>
 	</named-query>
 </entity-mappings>

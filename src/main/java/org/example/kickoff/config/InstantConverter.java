@@ -1,12 +1,11 @@
 package org.example.kickoff.config;
  import java.time.Instant;
-import java.util.Date;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
  /**
-  * Converts the JDK 8 / JSR 310 <code>Instant</code> type to <code>Date</code> for
+  * Converts the JDK 8 / JSR 310 <code>Instant</code> type to <code>Long</code> for
   * usage with JPA.
   *
   * <p>
@@ -18,23 +17,23 @@ import jakarta.persistence.Converter;
   * @author Arjan Tijms
   */
  @Converter(autoApply = true)
- public class InstantConverter implements AttributeConverter<Instant, Date> {
+ public class InstantConverter implements AttributeConverter<Instant, Long> {
 
  	@Override
- 	public Date convertToDatabaseColumn(Instant instant) {
+	public Long convertToDatabaseColumn(Instant instant) {
  		if (instant == null) {
  			return null;
  		}
 
- 		return Date.from(instant);
+		return instant.toEpochMilli();
  	}
 
  	@Override
- 	public Instant convertToEntityAttribute(Date date) {
+	public Instant convertToEntityAttribute(Long date) {
  		if (date == null) {
  			return null;
  		}
 
- 		return date.toInstant();
+		return Instant.ofEpochMilli(date);
  	}
  }
