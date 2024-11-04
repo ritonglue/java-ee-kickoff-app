@@ -45,13 +45,14 @@ public class LoginTokenService extends BaseEntityService<Long, LoginToken> {
 	}
 
 	public void remove(String loginToken) {
-		createNamedQuery("LoginToken.remove")
+		createNamedQuery(LoginToken.REMOVE)
 			.setParameter("tokenHash", digest(loginToken, MESSAGE_DIGEST_ALGORITHM))
 			.executeUpdate();
 	}
 
 	public void removeExpired() {
-		createNamedQuery("LoginToken.removeExpired")
+		createNamedQuery(LoginToken.REMOVE_EXPIRED)
+			.setParameter("expiration", Instant.now())
 			.executeUpdate();
 	}
 

@@ -5,6 +5,7 @@ import static org.example.kickoff.model.Group.USER;
 import static org.omnifaces.persistence.JPA.getOptionalSingleResult;
 import static org.omnifaces.utils.security.MessageDigests.digest;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,13 +112,14 @@ public class PersonService extends BaseEntityService<Long, Person> {
 	}
 
 	public Optional<Person> findByEmail(String email) {
-		return getOptionalSingleResult(createNamedTypedQuery("Person.getByEmail")
+		return getOptionalSingleResult(createNamedTypedQuery(Person.BY_EMAIL)
 			.setParameter("email", email));
 	}
 
 	public Optional<Person> findByLoginToken(String loginToken, TokenType type) {
-		return getOptionalSingleResult(createNamedTypedQuery("Person.getByLoginToken")
+		return getOptionalSingleResult(createNamedTypedQuery(Person.BY_LOGIN_TOKEN)
 			.setParameter("tokenHash", digest(loginToken, "SHA-256"))
+			.setParameter("expiration", Instant.now())
 			.setParameter("tokenType", type));
 	}
 

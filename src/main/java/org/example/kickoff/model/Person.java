@@ -16,6 +16,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
@@ -25,8 +26,32 @@ import jakarta.validation.constraints.Size;
 import org.example.kickoff.model.validator.Email;
 import org.omnifaces.persistence.model.TimestampedEntity;
 
+@NamedQuery(name = Person.BY_EMAIL, query =
+  "SELECT"
++ "	_person"
++ " FROM"
++ "	Person _person"
++ " WHERE"
++ "	_person.email = :email"
+)
+@NamedQuery(name = Person.BY_LOGIN_TOKEN, query =
+  "SELECT"
++ "	_person"
++ " FROM"
++ "	Person _person"
++ "		JOIN"
++ "	_person.loginTokens _loginToken"
++ "		JOIN FETCH"
++ "	_person.loginTokens"
++ " WHERE"
++ "	_loginToken.tokenHash = :tokenHash AND"
++ "	_loginToken.type = :tokenType AND"
++ "	_loginToken.expiration > :expiration"
+)
 @Entity
 public class Person extends TimestampedEntity<Long> {
+	public final static String BY_LOGIN_TOKEN = "Person.getByLoginToken";
+	public final static String BY_EMAIL = "Person.getByEmail";
 
 	private static final long serialVersionUID = 1L;
 
