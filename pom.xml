@@ -22,7 +22,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         
-        <test.wildfly.version>27.0.1.Final</test.wildfly.version>
+        <test.wildfly.version>29.0.1.Final</test.wildfly.version>
         <test.glassfish.version>7.0.0</test.glassfish.version>
         <test.piranha.version>23.1.0-SNAPSHOT</test.piranha.version>
     </properties>
@@ -409,7 +409,6 @@
                                 <configuration>
                                     <jbossHome>${project.build.directory}/wildfly-${test.wildfly.version}</jbossHome>
                                     <commands>
-                                        <command>/subsystem=elytron/policy=jacc:add(jacc-policy={})</command>
                                         <command>/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi, value=false)</command>
                                     </commands>
                                 </configuration>
