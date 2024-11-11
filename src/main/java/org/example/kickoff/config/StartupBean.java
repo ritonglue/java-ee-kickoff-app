@@ -41,7 +41,7 @@ public class StartupBean {
 			Person person = new Person();
 			person.setFirstName("Test");
 			person.setLastName("User");
-			person.setEmail("person@kickoff.example.org");
+			person.setEmail("user@kickoff.example.org");
 			personService.register(person, "passw0rd");
 		}
 	}
