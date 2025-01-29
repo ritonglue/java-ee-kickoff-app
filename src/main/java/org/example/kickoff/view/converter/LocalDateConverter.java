@@ -17,24 +17,19 @@ import jakarta.faces.convert.FacesConverter;
 import org.omnifaces.util.FacesLocal;
 
 @FacesConverter("localDateConverter")
-public class LocalDateConverter implements Converter {
+public class LocalDateConverter implements Converter<LocalDate> {
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object modelValue) {
+    public String getAsString(FacesContext context, UIComponent component, LocalDate modelValue) {
         if (modelValue == null) {
             return "";
         }
 
-        if (modelValue instanceof LocalDate) {
-            return getFormatter(context, component).format((LocalDate) modelValue);
-        }
-        else {
-            throw new IllegalArgumentException("This converter can only be used on LocalDate.");
-        }
+        return getFormatter(context, component).format(modelValue);
     }
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+    public LocalDate getAsObject(FacesContext context, UIComponent component, String submittedValue) {
         if (submittedValue == null || submittedValue.isEmpty()) {
             return null;
         }
