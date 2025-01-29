@@ -1,17 +1,23 @@
 package org.example.kickoff.config.auth;
+
+import static jakarta.interceptor.Interceptor.Priority.APPLICATION;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static jakarta.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
 import static org.example.kickoff.model.Group.USER;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.annotation.Priority;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.credential.CallerOnlyCredential;
 import jakarta.security.enterprise.credential.Credential;
-import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
+import jakarta.security.enterprise.identitystore.openid.OpenIdContext;
 
 import org.example.kickoff.business.exception.CredentialsException;
 import org.example.kickoff.business.exception.EmailNotVerifiedException;
@@ -19,27 +25,36 @@ import org.example.kickoff.business.exception.InvalidGroupException;
 import org.example.kickoff.business.service.PersonService;
 import org.example.kickoff.model.Person;
 
-@ApplicationScoped
+@Priority(APPLICATION)
+@Dependent
+@Decorator
 public class KickoffIdentityStore implements IdentityStore {
+
+	@Inject
+	@Delegate
+	@Any
+	private IdentityStore store;
+
+	@Inject
+	private OpenIdContext context;
 
 	@Inject
 	private PersonService personService;
 
 	@Override
 	public CredentialValidationResult validate(Credential credential) {
-		Supplier<Person> personSupplier = null;
-
-		if (credential instanceof UsernamePasswordCredential) {
-			String email = ((UsernamePasswordCredential) credential).getCaller();
-			String password = ((UsernamePasswordCredential) credential).getPasswordAsString();
-			personSupplier = () -> personService.getByEmailAndPassword(email, password);
+		CredentialValidationResult result = this.store.validate(credential);
+		switch(result.getStatus()) {
+		case INVALID:
+		case NOT_VALIDATED:
+			break;
+		case VALID:
+			String email = this.context.getClaims().getEmail().orElse(null);
+			Supplier<Person> personSupplier = () -> personService.getByEmail(email);
+			result = validate(personSupplier);
+			break;
 		}
-		else if (credential instanceof CallerOnlyCredential) {
-			String email = ((CallerOnlyCredential) credential).getCaller();
-			personSupplier = () -> personService.getByEmail(email);
-		}
-
-		return validate(personSupplier);
+		return result;
 	}
 
 	static CredentialValidationResult validate(Supplier<Person> personSupplier) {
@@ -65,4 +80,18 @@ public class KickoffIdentityStore implements IdentityStore {
 		}
 	}
 
+	@Override
+	public Set<String> getCallerGroups(CredentialValidationResult validationResult) {
+		return this.store.getCallerGroups(validationResult);
+	}
+
+	@Override
+	public Set<ValidationType> validationTypes() {
+		return this.store.validationTypes();
+	}
+
+	@Override
+	public int priority() {
+		return this.store.priority();
+	}
 }
