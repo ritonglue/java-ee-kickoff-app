@@ -24,18 +24,5 @@
 				<k:button id="save" action="#{profileBacking.save}" />
 			</k:buttons>
 		</k:form>
-
-		<k:form id="changePasswordForm">
-			<h2>#{i18n['user_profile.header.change_password']}</h2>
-
-			<k:input id="currentPassword" type="password" value="#{profileBacking.currentPassword}" autocomplete="false" />
-			<k:input id="newPassword" type="password" value="#{profileBacking.newPassword}" autocomplete="false" />
-			<k:input id="confirmPassword" type="password" value="#{profileBacking.newPassword}" autocomplete="false" />
-			<o:validateEqual components="newPassword confirmPassword" message="#{i18n['confirmPasswordValidator']}" showMessageFor="@all" />
-
-			<k:buttons>
-				<k:button id="change" action="#{profileBacking.changePassword}" />
-			</k:buttons>
-		</k:form>
 	</ui:define>
 </ui:composition>
