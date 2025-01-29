@@ -1,47 +1,39 @@
 package org.example.kickoff.config.auth;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.security.enterprise.AuthenticationStatus;
-import jakarta.security.enterprise.authentication.mechanism.http.AutoApplySession;
-import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
-import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
-import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue;
-import jakarta.security.enterprise.authentication.mechanism.http.RememberMe;
-import jakarta.security.enterprise.credential.Credential;
-import jakarta.security.enterprise.identitystore.IdentityStoreHandler;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.inject.Named;
+import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.authentication.mechanism.http.openid.LogoutDefinition;
 
 
-/**
- * Authentication mechanism that authenticates according to the Servlet spec defined FORM authentication mechanism.
- * See Servlet spec for further details.
- *
- * @author Arjan Tijms
- */
-@AutoApplySession // For "Is user already logged-in?"
-@RememberMe(
-		cookieSecureOnly = false, // Remove this when login is served over HTTPS.
-		cookieMaxAgeSeconds = 60 * 60 * 24 * 14) // 14 days.
-@LoginToContinue(
-		loginPage = "/login?continue=true",
-		errorPage = "",
-		useForwardToLogin = false)
+@OpenIdAuthenticationMechanismDefinition(
+      providerURI = "${oidcConfig.providerURI}"
+    , clientId = "${oidcConfig.clientId}"
+    , clientSecret = "${oidcConfig.clientSecret}"
+    , redirectURI = "${oidcConfig.redirectURI}"
+    , logout = @LogoutDefinition(redirectURI = "${oidcConfig.logoutURI}")
+)
 @ApplicationScoped
-public class KickoffFormAuthenticationMechanism implements HttpAuthenticationMechanism {
-
-    @Inject
-    private IdentityStoreHandler identityStoreHandler;
-
-	@Override
-	public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext context) {
-		Credential credential = context.getAuthParameters().getCredential();
-
-		if (credential != null) {
-            return context.notifyContainerAboutLogin(identityStoreHandler.validate(credential));
-        }
-
-        return context.doNothing();
+@Named("oidcConfig")
+public class KickoffFormAuthenticationMechanism {
+	private String clientId = "java-ee-kickoff-app";
+	private String clientSecret = "IFpT0RtzOGQjLSnGxXOUnVXyR4kUAdPH";
+	private String redirectURI = "${baseURL}/Callback";
+	private String logoutURI = "${baseURL}/home.xhtml";
+	private String providerURI = "http://localhost:8180/realms/java-ee-kickoff-app";
+	public String getClientId() {
+		return clientId;
+	}
+	public String getClientSecret() {
+		return clientSecret;
+	}
+	public String getRedirectURI() {
+		return redirectURI;
+	}
+	public String getLogoutURI() {
+		return logoutURI;
+	}
+	public String getProviderURI() {
+		return providerURI;
 	}
 
 }
