@@ -11,27 +11,22 @@ import org.example.kickoff.business.service.PersonService;
 import org.example.kickoff.model.Person;
 
 @FacesConverter(forClass=Person.class)
-public class PersonConverter implements Converter {
+public class PersonConverter implements Converter<Person> {
 
 	@Inject
 	private PersonService personService;
 
 	@Override
-	public String getAsString(FacesContext context, UIComponent component, Object modelValue) {
+	public String getAsString(FacesContext context, UIComponent component, Person modelValue) {
 		if (modelValue == null) {
 			return "";
 		}
 
-		if (modelValue instanceof Person) {
-			return ((Person) modelValue).getId().toString();
-		}
-		else {
-			throw new ConverterException(modelValue + " is not a Person");
-		}
+		return modelValue.getId().toString();
 	}
 
 	@Override
-	public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+	public Person getAsObject(FacesContext context, UIComponent component, String submittedValue) {
 		if (submittedValue == null) {
 			return null;
 		}
